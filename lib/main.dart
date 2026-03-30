@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:recipe_book/providers/recipes_provider.dart';
+import 'package:recipe_book/screens/favorite_recipes_screen.dart';
 import 'package:recipe_book/screens/home_screen.dart';
 
 void main() {
@@ -14,7 +15,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-      providers: [ChangeNotifierProvider(create: (_) => RecipesProvider())],
+      providers: [
+        ChangeNotifierProvider(
+          create: (_) => RecipesProvider()..fetchRecipes(),
+        ),
+      ],
       child: const MaterialApp(
         title: 'Flutter Demo',
         home: RecipeBook(),
@@ -30,7 +35,7 @@ class RecipeBook extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 1,
+      length: 2,
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.deepPurple,
@@ -46,10 +51,15 @@ class RecipeBook extends StatelessWidget {
             indicatorColor: Colors.white,
             labelColor: Colors.white,
             unselectedLabelColor: Color.fromARGB(240, 255, 255, 255),
-            tabs: [Tab(text: 'Home', icon: Icon(Icons.home))],
+            tabs: [
+              Tab(text: 'Home', icon: Icon(Icons.home)),
+              Tab(text: "Favorites", icon: Icon(Icons.favorite)),
+            ],
           ),
         ),
-        body: TabBarView(children: [const HomeScreen()]),
+        body: TabBarView(
+          children: [const HomeScreen(), const FavoriteRecipesScreen()],
+        ),
       ),
     );
   }

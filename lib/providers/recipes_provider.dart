@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
-import 'package:provider/provider.dart';
 
 import '../models/recipe_model.dart';
 
@@ -11,7 +10,12 @@ class RecipesProvider extends ChangeNotifier {
   bool hasError = false;
   List<RecipeModel> recipeList = [];
 
+  List<RecipeModel> get favoriteRecipesList =>
+      recipeList.where((r) => r.isFavorite).toList();
+
   Future<void> fetchRecipes() async {
+    if (recipeList.isNotEmpty) return;
+
     try {
       isLoading = true;
       hasError = false;
@@ -32,6 +36,14 @@ class RecipesProvider extends ChangeNotifier {
       rethrow;
     } finally {
       isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  toggleFavorite(RecipeModel recipe) {
+    final index = recipeList.indexWhere((r) => r.id == recipe.id);
+    if (index != -1) {
+      recipeList[index].isFavorite = !recipeList[index].isFavorite;
       notifyListeners();
     }
   }

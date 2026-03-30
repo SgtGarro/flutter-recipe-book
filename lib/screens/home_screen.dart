@@ -1,45 +1,32 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:recipe_book/models/recipe_model.dart';
 import 'package:recipe_book/providers/recipes_provider.dart';
 import 'package:recipe_book/screens/recipe_detail.dart';
-import 'package:http/http.dart' as http;
+import 'package:recipe_book/widgets/recipe_list_widget.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final recipesProvider = Provider.of<RecipesProvider>(
-      context,
-      listen: false,
-    );
-    recipesProvider.fetchRecipes();
-
     return Scaffold(
       body: Container(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
         child: Consumer<RecipesProvider>(
           builder: (context, provider, child) {
-            if (provider.isLoading) {
-              return const Center(child: CircularProgressIndicator());
-            }
-            if (provider.hasError) {
-              return const Center(
-                child: Text("Ups! There's an error retrieving the recipes"),
-              );
-            }
-
-            if (provider.recipeList.isEmpty) {
-              return const Center(child: Text("No recipes found"));
-            }
-
-            return ListView.builder(
-              itemCount: provider.recipeList.length,
-              itemBuilder: (context, index) =>
-                  _buildRecipesCard(context, provider.recipeList[index]),
+            return RecipeListWidget(
+              recipeList: provider.recipeList,
+              isLoading: provider.isLoading,
+              showError: provider.hasError,
+              onPressFavorite: (recipe) => provider.toggleFavorite(recipe),
+              onTap: (recipe) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => RecipeDetail(recipe: recipe),
+                  ),
+                );
+              },
             );
           },
         ),
@@ -65,64 +52,6 @@ class HomeScreen extends StatelessWidget {
           ),
         ),
         child: Wrap(children: [RecipeForm()]),
-      ),
-    );
-  }
-
-  Widget _buildRecipesCard(BuildContext context, RecipeModel recipe) {
-    return GestureDetector(
-      child: Card(
-        elevation: .5,
-        clipBehavior: Clip.antiAlias,
-        child: InkWell(
-          onTap: () => Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => RecipeDetail(recipe: recipe),
-            ),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(
-                width: 100,
-                height: 100,
-                // decoration: BoxDecoration(color: Colors.deepPurple),
-                child: Image.network(recipe.imageUrl, fit: BoxFit.cover),
-              ),
-              SizedBox(width: 16),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 10),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      recipe.name,
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    Container(
-                      height: 2,
-                      width: 80,
-                      color: Colors.deepPurple,
-                      margin: EdgeInsets.symmetric(vertical: 2),
-                    ),
-                    Text(
-                      'Difficulty: ${recipe.difficulty}',
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }

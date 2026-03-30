@@ -1,10 +1,13 @@
 class RecipeModel {
+  final int id;
+  bool isFavorite = false;
   final String name;
   final String imageUrl;
   final String difficulty;
   final List<String> tags;
 
   RecipeModel({
+    required this.id,
     required this.name,
     required this.imageUrl,
     required this.difficulty,
@@ -15,6 +18,7 @@ class RecipeModel {
     final tags = List.castFrom<dynamic, String>(json['tags']);
 
     return RecipeModel(
+      id: json['id'],
       name: json['name'],
       imageUrl: json['image'],
       difficulty: json['difficulty'],
@@ -23,11 +27,17 @@ class RecipeModel {
   }
 
   Map<String, dynamic> toJSON() {
-    return {'name': name, 'image': imageUrl, 'difficulty': difficulty};
+    return {
+      'id': id,
+      'name': name,
+      'image': imageUrl,
+      'difficulty': difficulty,
+      'isFavorite': isFavorite,
+    };
   }
 
   @override
   String toString() {
-    return 'RecipeModel{name:$name, image:$imageUrl, difficulty:$difficulty}';
+    return 'RecipeModel{id:$id, name:$name, image:$imageUrl, difficulty:$difficulty}, isFavorite:$isFavorite';
   }
 }
