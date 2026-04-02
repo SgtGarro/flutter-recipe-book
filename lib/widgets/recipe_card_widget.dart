@@ -39,42 +39,60 @@ class RecipeCardWidget extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          recipe.name,
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            recipe.name,
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
-                        ),
-                        Container(
-                          height: 2,
-                          width: 80,
-                          color: Colors.deepPurple,
-                          margin: EdgeInsets.symmetric(vertical: 2),
-                        ),
-                        Text(
-                          'Difficulty: ${recipe.difficulty}',
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w400,
+                          Container(
+                            height: 2,
+                            width: 80,
+                            color: Colors.deepPurple,
+                            margin: EdgeInsets.symmetric(vertical: 2),
                           ),
-                        ),
-                      ],
+                          Text(
+                            'Difficulty: ${recipe.difficulty}',
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                     if (showFavoriteButton) ...[
                       const SizedBox(width: 16),
                       IconButton(
+                        icon: AnimatedSwitcher(
+                          duration: Duration(milliseconds: 300),
+                          child: Icon(
+                            recipe.isFavorite
+                                ? Icons.favorite
+                                : Icons.favorite_border,
+                            key: ValueKey<bool>(recipe.isFavorite),
+                            color: Theme.of(context).primaryColor,
+                          ),
+                          transitionBuilder: (child, animation) {
+                            return ScaleTransition(
+                              scale: animation,
+                              child: child,
+                            );
+                          },
+                        ),
+                        // icon: Icon(
+                        //   recipe.isFavorite == true
+                        //       ? Icons.favorite
+                        //       : Icons.favorite_border,
+                        // ),
                         onPressed: () {
                           onPressFavorite?.call();
                         },
-                        icon: Icon(
-                          recipe.isFavorite == true
-                              ? Icons.favorite
-                              : Icons.favorite_border,
-                        ),
                       ),
                     ],
                   ],

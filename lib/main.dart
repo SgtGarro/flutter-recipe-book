@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:recipe_book/providers/recipes_provider.dart';
 import 'package:recipe_book/screens/favorite_recipes_screen.dart';
 import 'package:recipe_book/screens/home_screen.dart';
+import 'package:recipe_book/l10n/generated/app_localizations.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
   runApp(const MyApp());
 }
 
@@ -21,8 +25,14 @@ class MyApp extends StatelessWidget {
         ),
       ],
       child: const MaterialApp(
-        title: 'Flutter Demo',
+        title: 'Recipe Book',
         home: RecipeBook(),
+        localizationsDelegates: [
+          AppLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+        ],
         debugShowCheckedModeBanner: false,
       ),
     );
@@ -39,8 +49,8 @@ class RecipeBook extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.deepPurple,
-          title: const Text(
-            'Recipe Book',
+          title: Text(
+            AppLocalizations.of(context)!.title,
             style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.w600,
